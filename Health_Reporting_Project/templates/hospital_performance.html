@@ -1,0 +1,433 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hospital Performance | Health Reporting System</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #FAF7F5;
+            color: #34263B;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 245px;
+            background: #1B1931;
+            color: white;
+            padding: 30px 20px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: bold;
+            margin-bottom: 45px;
+            line-height: 1.5;
+        }
+
+        .brand span {
+            color: #ED9E59;
+        }
+
+        .nav-link {
+            display: block;
+            color: #E9BCB9;
+            text-decoration: none;
+            padding: 14px 15px;
+            margin-bottom: 10px;
+            border-radius: 9px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: #44174E;
+            color: white;
+        }
+
+        /* LOGOUT */
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(233, 188, 185, 0.2);
+        }
+
+        .logout-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 15px;
+            border-radius: 9px;
+            color: #E9BCB9;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .logout-link:hover {
+            background: #662249;
+            color: white;
+        }
+
+        .logout-icon {
+            font-size: 19px;
+        }
+
+        /* MAIN CONTENT */
+
+        .main {
+            flex: 1;
+            padding: 35px;
+            min-width: 0;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            font-size: 29px;
+            color: #1B1931;
+            margin-bottom: 9px;
+        }
+
+        .page-header p {
+            color: #806D7B;
+            font-size: 14px;
+        }
+
+        /* TABLE SECTION */
+
+        .section {
+            background: white;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 4px 18px rgba(27, 25, 49, 0.06);
+            margin-bottom: 25px;
+        }
+
+        .section h2 {
+            color: #44174E;
+            font-size: 19px;
+            margin-bottom: 20px;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1050px;
+        }
+
+        th {
+            background: #1B1931;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #F0E6E8;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        tbody tr:hover {
+            background: #FAF3F3;
+        }
+
+        .hospital-name {
+            color: #44174E;
+            font-weight: bold;
+        }
+
+        .rate {
+            color: #A34054;
+            font-weight: bold;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 30px;
+            color: #806D7B;
+        }
+
+        /* FOOTER */
+
+        .footer {
+            text-align: center;
+            color: #806D7B;
+            font-size: 12px;
+            padding: 20px 0;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 800px) {
+
+            .layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                min-height: auto;
+                padding: 20px;
+            }
+
+            .brand {
+                margin-bottom: 18px;
+            }
+
+            .nav-link {
+                display: inline-block;
+                margin: 4px;
+                padding: 10px;
+            }
+
+            .sidebar-bottom {
+                margin-top: 15px;
+            }
+
+            .main {
+                padding: 20px;
+            }
+
+        }
+
+        @media (max-width: 500px) {
+
+            .page-header h1 {
+                font-size: 24px;
+            }
+
+            .section {
+                padding: 17px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            HEALTH<br>
+            <span>REPORTING SYSTEM</span>
+        </div>
+
+        <a href="{{ url_for('home') }}" class="nav-link">
+            Overview
+        </a>
+
+        <a href="{{ url_for('data_quality') }}" class="nav-link">
+            Data Quality
+        </a>
+
+        <a href="{{ url_for('hospital_performance') }}" class="nav-link active">
+            Hospital Performance
+        </a>
+
+        <a href="{{ url_for('disease_analysis') }}" class="nav-link">
+            Disease Analysis
+        </a>
+
+        <!-- DISTRICT HEALTH MAP -->
+
+        <a href="{{ url_for('district_map') }}" class="nav-link">
+            District Health Map
+        </a>
+
+        <!-- SMART ALERTS -->
+
+        <a href="{{ url_for('smart_alerts') }}" class="nav-link">
+            Smart Alerts
+        </a>
+
+        {% if session.get('role') in ['admin', 'hospital_operator'] %}
+
+        <a href="{{ url_for('add_report') }}" class="nav-link">
+            Add New Report
+        </a>
+
+        {% endif %}
+
+        <!-- LOGOUT -->
+
+        <div class="sidebar-bottom">
+
+            <a href="{{ url_for('logout') }}"
+               class="logout-link"
+               onclick="return confirm('Are you sure you want to log out?');">
+
+                <span class="logout-icon">↪</span>
+                <span>Logout</span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main">
+
+        <header class="page-header">
+
+            <h1>Hospital Performance</h1>
+
+            <p>
+                Monitor hospital-wise reporting activity,
+                submission rates and reporting delays
+            </p>
+
+        </header>
+
+        <!-- HOSPITAL REPORTING SUMMARY -->
+
+        <section class="section">
+
+            <h2>Hospital Reporting Summary</h2>
+
+            {% if hospital_performance %}
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Hospital</th>
+                            <th>District</th>
+                            <th>Total Reports</th>
+                            <th>Submitted</th>
+                            <th>Not Submitted</th>
+                            <th>On Time</th>
+                            <th>Late</th>
+                            <th>Submission Rate</th>
+                            <th>Average Delay (Minutes)</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for hospital in hospital_performance %}
+
+                        <tr>
+
+                            <td class="hospital-name">
+                                {{ hospital.hospital_name }}
+                            </td>
+
+                            <td>
+                                {{ hospital.district }}
+                            </td>
+
+                            <td>
+                                {{ hospital.total_reports }}
+                            </td>
+
+                            <td>
+                                {{ hospital.submitted }}
+                            </td>
+
+                            <td>
+                                {{ hospital.not_submitted }}
+                            </td>
+
+                            <td>
+                                {{ hospital.on_time }}
+                            </td>
+
+                            <td>
+                                {{ hospital.late }}
+                            </td>
+
+                            <td class="rate">
+                                {{ hospital.submission_rate }}%
+                            </td>
+
+                            <td>
+                                {{ hospital.average_delay }}
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="no-data">
+                No hospital performance data available.
+            </div>
+
+            {% endif %}
+
+        </section>
+
+        <!-- FOOTER -->
+
+        <footer class="footer">
+
+            Health Reporting System | Hospital Performance Dashboard
+
+        </footer>
+
+    </main>
+
+</div>
+
+</body>
+</html>

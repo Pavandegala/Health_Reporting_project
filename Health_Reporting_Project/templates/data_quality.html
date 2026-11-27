@@ -1,0 +1,845 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Data Quality | Health Reporting System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --midnight: #1B1931;
+            --aubergine: #44174E;
+            --berry: #662249;
+            --rose: #A34054;
+            --amber: #ED9E59;
+            --blush: #E9BCB9;
+            --background: #FAF7F5;
+            --white: #FFFFFF;
+            --text: #34263B;
+            --muted: #827783;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 250px;
+            background: var(--midnight);
+            color: white;
+            padding: 30px 20px;
+            position: fixed;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: 700;
+            color: var(--blush);
+            margin-bottom: 8px;
+        }
+
+        .brand-subtitle {
+            color: #C9BFCB;
+            font-size: 12px;
+            margin-bottom: 45px;
+        }
+
+        .nav-title {
+            font-size: 11px;
+            color: var(--blush);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .nav-link {
+            display: block;
+            text-decoration: none;
+            color: #E9DDE8;
+            padding: 14px 15px;
+            margin-bottom: 9px;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .nav-link:hover {
+            background: var(--aubergine);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: var(--berry);
+            color: white;
+            border-left: 4px solid var(--amber);
+        }
+
+        /* LOGOUT */
+
+        .sidebar-bottom {
+            margin-top: auto;
+            border-top: 1px solid rgba(233, 188, 185, 0.2);
+            padding-top: 20px;
+        }
+
+        .logout-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 15px;
+            border-radius: 9px;
+            color: #E9BCB9;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .logout-link:hover {
+            background: var(--berry);
+            color: white;
+        }
+
+        .logout-icon {
+            font-size: 19px;
+        }
+
+        /* MAIN CONTENT */
+
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 35px 40px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 32px;
+        }
+
+        .topbar h1 {
+            font-size: 29px;
+            color: var(--midnight);
+        }
+
+        .topbar p {
+            color: var(--muted);
+            font-size: 14px;
+            margin-top: 7px;
+        }
+
+        .page-tag {
+            background: var(--blush);
+            color: var(--aubergine);
+            padding: 11px 18px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .section-heading {
+            color: var(--berry);
+            font-size: 19px;
+            margin-bottom: 18px;
+        }
+
+        .section-description {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
+
+        /* SUMMARY CARDS */
+
+        .quality-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .quality-card {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            min-height: 145px;
+            box-shadow: 0 5px 18px rgba(27, 25, 49, 0.06);
+            border: 1px solid #F0E6E9;
+            transition: 0.3s;
+        }
+
+        .quality-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 9px 22px rgba(27, 25, 49, 0.11);
+        }
+
+        .quality-card:nth-child(6n+1) { background: #E9BCB9; }
+        .quality-card:nth-child(6n+2) { background: #E8DCEB; }
+        .quality-card:nth-child(6n+3) { background: #F6E4D3; }
+        .quality-card:nth-child(6n+4) { background: #F2D9D6; }
+        .quality-card:nth-child(6n+5) { background: #EAD7E1; }
+        .quality-card:nth-child(6n+6) { background: #F5E9E3; }
+
+        .card-label {
+            color: var(--berry);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .card-value {
+            color: var(--midnight);
+            font-size: 29px;
+            font-weight: 700;
+        }
+
+        .card-note {
+            color: #66576A;
+            font-size: 12px;
+            margin-top: 9px;
+        }
+
+        /* DETAIL SECTIONS */
+
+        .details-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 5px 18px rgba(27, 25, 49, 0.06);
+            border: 1px solid #F0E6E9;
+            margin-bottom: 25px;
+        }
+
+        .details-card h2 {
+            color: var(--berry);
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .details-card p {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 550px;
+        }
+
+        th {
+            background: var(--midnight);
+            color: white;
+            text-align: left;
+            padding: 15px;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #F0E6E9;
+            font-size: 14px;
+        }
+
+        tr:hover td {
+            background: #FAF4F5;
+        }
+
+        .status-good {
+            color: #356D4B;
+            background: #E0EFE3;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .status-info {
+            color: #76501F;
+            background: #F8EBD5;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        /* INFORMATION PANEL */
+
+        .info-panel {
+            background: #F3E8F0;
+            border-left: 5px solid var(--berry);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .info-panel h3 {
+            color: var(--berry);
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .info-panel p {
+            color: var(--text);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 25px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1000px) {
+            .quality-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                min-height: auto;
+            }
+
+            .sidebar-bottom {
+                margin-top: 15px;
+            }
+
+            .brand-subtitle {
+                margin-bottom: 20px;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+                padding: 25px 18px;
+            }
+
+            .quality-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">Health Reporting</div>
+
+        <div class="brand-subtitle">
+            Healthcare Analytics System
+        </div>
+
+        <div class="nav-title">Main Menu</div>
+
+        <a href="{{ url_for('home') }}" class="nav-link">
+            Overview
+        </a>
+
+        <a href="{{ url_for('data_quality') }}" class="nav-link active">
+            Data Quality
+        </a>
+
+        <a href="{{ url_for('hospital_performance') }}" class="nav-link">
+            Hospital Performance
+        </a>
+
+        <a href="{{ url_for('disease_analysis') }}" class="nav-link">
+            Disease Analysis
+        </a>
+
+        <!-- DISTRICT HEALTH MAP -->
+
+        <a href="{{ url_for('district_map') }}" class="nav-link">
+            District Health Map
+        </a>
+
+        <a href="{{ url_for('smart_alerts') }}" class="nav-link">
+            Smart Alerts
+        </a>
+
+        {% if session.get('role') in ['admin', 'hospital_operator'] %}
+        <a href="{{ url_for('add_report') }}" class="nav-link">
+            Add New Report
+        </a>
+        {% endif %}
+
+        <!-- LOGOUT -->
+
+        <div class="sidebar-bottom">
+
+            <a href="{{ url_for('logout') }}"
+               class="logout-link"
+               onclick="return confirm('Are you sure you want to log out?');">
+
+                <span class="logout-icon">↪</span>
+                <span>Logout</span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main">
+
+        <div class="topbar">
+
+            <div>
+                <h1>Data Quality Dashboard</h1>
+
+                <p>
+                    Monitoring completeness, validity and consistency
+                    of healthcare reports
+                </p>
+            </div>
+
+            <div class="page-tag">
+                DATA QUALITY REPORT
+            </div>
+
+        </div>
+
+        <!-- QUALITY OVERVIEW -->
+
+        <h2 class="section-heading">
+            Data Quality Overview
+        </h2>
+
+        <p class="section-description">
+            Key indicators describing the reliability of healthcare reporting data
+        </p>
+
+        <div class="quality-grid">
+
+            <div class="quality-card">
+                <div class="card-label">Completeness Score</div>
+                <div class="card-value">
+                    {{ "%.2f"|format(quality.completeness) }}%
+                </div>
+                <div class="card-note">Six required fields checked</div>
+            </div>
+
+            <div class="quality-card">
+                <div class="card-label">Validity Score</div>
+                <div class="card-value">
+                    {{ "%.2f"|format(quality.validity) }}%
+                </div>
+                <div class="card-note">Date, case and delay checks</div>
+            </div>
+
+            <div class="quality-card">
+                <div class="card-label">Required Missing Values</div>
+                <div class="card-value">
+                    {{ quality.missing_values }}
+                </div>
+                <div class="card-note">Missing values in required fields</div>
+            </div>
+
+            <div class="quality-card">
+                <div class="card-label">Expected Missing Values</div>
+                <div class="card-value">
+                    {{ quality.expected_missing_values }}
+                </div>
+                <div class="card-note">Associated with not-submitted reports</div>
+            </div>
+
+            <div class="quality-card">
+                <div class="card-label">Unexpected Missing Values</div>
+                <div class="card-value">
+                    {{ quality.unexpected_missing_values }}
+                </div>
+                <div class="card-note">Missing values in submitted reports</div>
+            </div>
+
+            <div class="quality-card">
+                <div class="card-label">Duplicate Reports</div>
+                <div class="card-value">
+                    {{ quality.duplicate_reports }}
+                </div>
+                <div class="card-note">Hospital, date and disease duplicates</div>
+            </div>
+
+            <div class="quality-card">
+                <div class="card-label">Average Reporting Delay</div>
+                <div class="card-value">
+                    {{ "%.2f"|format(quality.average_delay) }} min
+                </div>
+                <div class="card-note">Average delay for submitted reports</div>
+            </div>
+
+            <div class="quality-card">
+                <div class="card-label">Submission Rate</div>
+                <div class="card-value">
+                    {{ "%.2f"|format(quality.submission_rate) }}%
+                </div>
+                <div class="card-note">Reports submitted out of total reports</div>
+            </div>
+
+            <div class="quality-card">
+                <div class="card-label">Duplicate Report IDs</div>
+                <div class="card-value">
+                    {{ quality.duplicate_report_ids }}
+                </div>
+                <div class="card-note">Repeated report identifiers</div>
+            </div>
+
+        </div>
+
+        <!-- MISSING VALUE ANALYSIS -->
+
+        <div class="details-card">
+
+            <h2>Missing Value Analysis</h2>
+
+            <p>
+                Missing values are separated into expected and unexpected
+                categories. Cases, submission time and delay are expected
+                to be empty when a report has not been submitted.
+            </p>
+
+            <div class="table-wrapper">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Missing Value Category</th>
+                            <th>Result</th>
+                            <th>Interpretation</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>Expected Missing Values</td>
+                            <td>{{ quality.expected_missing_values }}</td>
+                            <td><span class="status-info">Expected</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>Unexpected Missing Values</td>
+                            <td>{{ quality.unexpected_missing_values }}</td>
+                            <td><span class="status-good">Verified</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>Missing Cases in Submitted Reports</td>
+                            <td>{{ quality.missing_cases_submitted }}</td>
+                            <td><span class="status-good">Verified</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>Missing Submission Time in Submitted Reports</td>
+                            <td>{{ quality.missing_submission_time_submitted }}</td>
+                            <td><span class="status-good">Verified</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>Missing Delay in Submitted Reports</td>
+                            <td>{{ quality.missing_delays_submitted }}</td>
+                            <td><span class="status-good">Verified</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+        <!-- VALIDITY ANALYSIS -->
+
+        <div class="details-card">
+
+            <h2>Validity Analysis</h2>
+
+            <p>
+                Checks whether report dates, case counts, delay values
+                and submission statuses satisfy the project's validation rules.
+            </p>
+
+            <div class="table-wrapper">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Quality Parameter</th>
+                            <th>Result</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>Valid Report Dates</td>
+                            <td>{{ quality.valid_dates }}</td>
+                            <td><span class="status-good">Verified</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>Valid Case Values</td>
+                            <td>{{ quality.valid_cases }}</td>
+                            <td><span class="status-good">Verified</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>Valid Delay Values</td>
+                            <td>{{ quality.valid_delays }}</td>
+                            <td><span class="status-good">Verified</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>Invalid Submission Values</td>
+                            <td>{{ quality.invalid_submission_values }}</td>
+                            <td><span class="status-good">Checked</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>Submission Status Mismatches</td>
+                            <td>{{ quality.status_mismatches }}</td>
+                            <td><span class="status-good">Checked</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+        <!-- UNIQUENESS ANALYSIS -->
+
+        <div class="details-card">
+
+            <h2>Uniqueness Analysis</h2>
+
+            <p>
+                Checks for repeated report identifiers and duplicate
+                hospital-date-disease records.
+            </p>
+
+            <div class="table-wrapper">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Quality Parameter</th>
+                            <th>Result</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>Duplicate Hospital-Date-Disease Reports</td>
+                            <td>{{ quality.duplicate_reports }}</td>
+                            <td><span class="status-good">Checked</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>Duplicate Report IDs</td>
+                            <td>{{ quality.duplicate_report_ids }}</td>
+                            <td><span class="status-good">Checked</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+        <!-- CONSISTENCY ANALYSIS -->
+
+        <div class="details-card">
+
+            <h2>Consistency Analysis</h2>
+
+            <p>
+                Compares hospital identifiers, hospital names and
+                district information with the hospital master table.
+            </p>
+
+            <div class="table-wrapper">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Quality Parameter</th>
+                            <th>Result</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>Invalid Hospital IDs</td>
+                            <td>{{ quality.invalid_hospital_ids }}</td>
+                            <td><span class="status-good">Checked</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>Hospital Name Mismatches</td>
+                            <td>{{ quality.name_mismatches }}</td>
+                            <td><span class="status-good">Checked</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>District Mismatches</td>
+                            <td>{{ quality.district_mismatches }}</td>
+                            <td><span class="status-good">Checked</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+        <!-- SUBMISSION PERFORMANCE -->
+
+        <div class="details-card">
+
+            <h2>Reporting Timeliness</h2>
+
+            <p>
+                Summary of submitted, late and not-submitted healthcare reports.
+            </p>
+
+            <div class="table-wrapper">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Reporting Parameter</th>
+                            <th>Number of Reports</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>On-Time Reports</td>
+                            <td>{{ quality.on_time }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Late Reports</td>
+                            <td>{{ quality.late }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Not-Submitted Reports</td>
+                            <td>{{ quality.not_submitted }}</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+        <!-- INTERPRETATION -->
+
+        <div class="info-panel">
+
+            <h3>Data Quality Interpretation</h3>
+
+            <p>
+                The dataset currently has
+                <strong>{{ "%.2f"|format(quality.completeness) }}%</strong>
+                completeness and
+                <strong>{{ "%.2f"|format(quality.validity) }}%</strong>
+                validity.
+
+                There are
+                <strong>{{ quality.unexpected_missing_values }}</strong>
+                unexpected missing values and
+                <strong>{{ quality.duplicate_reports }}</strong>
+                duplicate hospital-date-disease records.
+
+                The
+                <strong>{{ quality.expected_missing_values }}</strong>
+                expected missing values are associated with reports
+                that were not submitted and should not automatically
+                be treated as data quality errors.
+            </p>
+
+        </div>
+
+        <div class="footer">
+            Health Reporting System | Data Quality Dashboard
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

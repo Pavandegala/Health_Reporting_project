@@ -1,0 +1,318 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Health Reporting System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            background: #FAF7F5;
+        }
+
+        .left-panel {
+            width: 52%;
+            background: linear-gradient(
+                145deg,
+                #1B1931,
+                #44174E,
+                #662249
+            );
+            color: white;
+            padding: 65px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .brand span {
+            color: #ED9E59;
+        }
+
+        .welcome {
+            max-width: 510px;
+        }
+
+        .welcome h1 {
+            font-size: 43px;
+            line-height: 1.25;
+            margin-bottom: 22px;
+        }
+
+        .welcome p {
+            color: #E9BCB9;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .features {
+            margin-top: 35px;
+        }
+
+        .feature {
+            margin: 17px 0;
+            color: #F5E8E7;
+            font-size: 14px;
+        }
+
+        .feature span {
+            color: #ED9E59;
+            margin-right: 12px;
+        }
+
+        .footer {
+            color: #C9B7C8;
+            font-size: 12px;
+        }
+
+        .right-panel {
+            width: 48%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 35px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .login-card h2 {
+            color: #1B1931;
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #817582;
+            font-size: 14px;
+            margin-bottom: 35px;
+            line-height: 1.6;
+        }
+
+        .admin-label {
+            display: inline-block;
+            background: #F4E5E8;
+            color: #662249;
+            padding: 8px 13px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            color: #34263B;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 9px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #E4DCE2;
+            border-radius: 9px;
+            outline: none;
+            font-size: 14px;
+            margin-bottom: 22px;
+            background: white;
+        }
+
+        input:focus {
+            border-color: #A34054;
+            box-shadow: 0 0 0 3px rgba(163, 64, 84, 0.10);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 9px;
+            background: linear-gradient(
+                110deg,
+                #662249,
+                #A34054
+            );
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .login-button:hover {
+            background: #44174E;
+            transform: translateY(-2px);
+        }
+
+        .message {
+            padding: 12px;
+            margin-bottom: 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            background: #F8E5E5;
+            color: #9B263A;
+        }
+
+        .security-note {
+            text-align: center;
+            margin-top: 27px;
+            color: #938793;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 850px) {
+            .left-panel {
+                display: none;
+            }
+
+            .right-panel {
+                width: 100%;
+                min-height: 100vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <section class="left-panel">
+
+        <div class="brand">
+            HEALTH<span>REPORT</span>
+        </div>
+
+        <div class="welcome">
+
+            <h1>
+                Smarter Health Data.
+                Better Decisions.
+            </h1>
+
+            <p>
+                A centralized health reporting and
+                surveillance platform designed to
+                improve reporting transparency,
+                monitor hospital performance and
+                support informed healthcare decisions.
+            </p>
+
+            <div class="features">
+                <div class="feature">
+                    <span>✦</span>
+                    Real-time reporting insights
+                </div>
+
+                <div class="feature">
+                    <span>✦</span>
+                    Data quality monitoring
+                </div>
+
+                <div class="feature">
+                    <span>✦</span>
+                    Hospital performance analytics
+                </div>
+
+                <div class="feature">
+                    <span>✦</span>
+                    Disease surveillance
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            © 2026 Health Reporting System.
+            All rights reserved.
+        </div>
+
+    </section>
+
+
+    <section class="right-panel">
+
+        <div class="login-card">
+
+            <div class="admin-label">
+                ADMINISTRATOR PORTAL
+            </div>
+
+            <h2>Welcome Back</h2>
+
+            <p class="subtitle">
+                Sign in to access your health reporting
+                management dashboard.
+            </p>
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="message">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('login') }}">
+
+                <label for="username">Username</label>
+
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter your username"
+                    required
+                    autocomplete="username"
+                >
+
+                <label for="password">Password</label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    required
+                    autocomplete="current-password"
+                >
+
+                <button type="submit" class="login-button">
+                    Sign In to Dashboard →
+                </button>
+
+            </form>
+
+            <div class="security-note">
+                🔒 Authorized access only<br>
+                Your account is managed by the system administrator.
+            </div>
+
+        </div>
+
+    </section>
+
+</body>
+</html>

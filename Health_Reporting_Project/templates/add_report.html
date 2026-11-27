@@ -1,0 +1,933 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Add New Report | Health Reporting System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #FAF7F5;
+            color: #34263B;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 245px;
+            min-height: 100vh;
+            height: 100vh;
+            padding: 30px 20px;
+            background: #1B1931;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: bold;
+            line-height: 1.5;
+            margin-bottom: 45px;
+        }
+
+        .brand span {
+            color: #ED9E59;
+        }
+
+        .nav-link {
+            display: block;
+            color: #E9BCB9;
+            text-decoration: none;
+            padding: 14px 15px;
+            margin-bottom: 10px;
+            border-radius: 9px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: #44174E;
+            color: white;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(233, 188, 185, 0.2);
+        }
+
+        .logout-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 15px;
+            color: #E9BCB9;
+            text-decoration: none;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .logout-link:hover {
+            background: #662249;
+            color: white;
+        }
+
+        /* MAIN */
+
+        .main {
+            flex: 1;
+            min-width: 0;
+            padding: 35px;
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+        .page-header h1 {
+            color: #1B1931;
+            font-size: 29px;
+            margin-bottom: 9px;
+        }
+
+        .page-header p {
+            color: #806D7B;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* INTRODUCTION */
+
+        .intro-card {
+            background: linear-gradient(120deg, #1B1931, #44174E);
+            color: white;
+            border-radius: 15px;
+            padding: 25px 28px;
+            margin-bottom: 25px;
+        }
+
+        .intro-card h2 {
+            font-size: 19px;
+            margin-bottom: 9px;
+        }
+
+        .intro-card p {
+            color: #E9BCB9;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        /* FORM CARD */
+
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(27, 25, 49, 0.06);
+            margin-bottom: 25px;
+        }
+
+        .form-heading {
+            border-bottom: 1px solid #F0E6E8;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-heading h2 {
+            color: #44174E;
+            font-size: 19px;
+            margin-bottom: 7px;
+        }
+
+        .form-heading p {
+            color: #806D7B;
+            font-size: 13px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 23px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #44174E;
+        }
+
+        .required {
+            color: #A34054;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #E9DDE2;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            color: #34263B;
+            background: #FFFEFE;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #A34054;
+            box-shadow: 0 0 0 3px rgba(163, 64, 84, 0.10);
+        }
+
+        input:disabled,
+        select:disabled {
+            background: #F3EFF1;
+            cursor: not-allowed;
+        }
+
+        input[readonly] {
+            background: #F3EFF1;
+            font-weight: bold;
+            cursor: not-allowed;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 110px;
+        }
+
+        .helper-text {
+            font-size: 11px;
+            color: #806D7B;
+            line-height: 1.5;
+        }
+
+        /* SUBMISSION DETAILS */
+
+        .submission-panel {
+            background: #FAF7F5;
+            border: 1px solid #F0E6E8;
+            border-radius: 12px;
+            padding: 22px;
+            margin-top: 25px;
+        }
+
+        .submission-panel h3 {
+            font-size: 15px;
+            color: #44174E;
+            margin-bottom: 20px;
+        }
+
+        .submission-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .status-note {
+            padding: 13px 15px;
+            margin-top: 18px;
+            border-radius: 8px;
+            background: #F5EBF3;
+            color: #662249;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        /* BUTTONS */
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 13px;
+            flex-wrap: wrap;
+            margin-top: 28px;
+            padding-top: 23px;
+            border-top: 1px solid #F0E6E8;
+        }
+
+        .btn {
+            border: none;
+            padding: 14px 23px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-draft {
+            background: #F2E8EF;
+            color: #662249;
+        }
+
+        .btn-draft:hover {
+            background: #E9BCB9;
+        }
+
+        .btn-submit {
+            background: #662249;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background: #44174E;
+            transform: translateY(-1px);
+        }
+
+        /* ALERTS */
+
+        .alert {
+            padding: 15px 18px;
+            border-radius: 9px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .alert.success {
+            background: #EAF5ED;
+            border: 1px solid #B9DFC2;
+            color: #23663A;
+        }
+
+        .alert.error {
+            background: #FCEDEE;
+            border: 1px solid #EBC4C8;
+            color: #963B46;
+        }
+
+        /* FOOTER */
+
+        .footer {
+            text-align: center;
+            color: #806D7B;
+            font-size: 12px;
+            padding: 20px;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 900px) {
+            .submission-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 800px) {
+            .layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                min-height: auto;
+                padding: 20px;
+            }
+
+            .brand {
+                margin-bottom: 18px;
+            }
+
+            .nav-link {
+                display: inline-block;
+                margin: 4px;
+                padding: 10px;
+            }
+
+            .sidebar-bottom {
+                margin-top: 15px;
+            }
+
+            .main {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .form-grid,
+            .submission-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-card {
+                padding: 20px;
+            }
+
+            .page-header h1 {
+                font-size: 24px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            HEALTH<br>
+            <span>REPORTING SYSTEM</span>
+        </div>
+
+        <a href="{{ url_for('home') }}" class="nav-link">
+            Overview
+        </a>
+
+        <a href="{{ url_for('data_quality') }}" class="nav-link">
+            Data Quality
+        </a>
+
+        <a href="{{ url_for('hospital_performance') }}" class="nav-link">
+            Hospital Performance
+        </a>
+
+        <a href="{{ url_for('disease_analysis') }}" class="nav-link">
+            Disease Analysis
+        </a>
+
+        <a href="{{ url_for('district_map') }}" class="nav-link">
+            District Health Map
+        </a>
+
+        <a href="{{ url_for('smart_alerts') }}" class="nav-link">
+            Smart Alerts
+        </a>
+
+        <a href="{{ url_for('add_report') }}" class="nav-link active">
+            Add New Report
+        </a>
+
+        <div class="sidebar-bottom">
+
+            <a href="{{ url_for('logout') }}"
+               class="logout-link"
+               onclick="return confirm('Are you sure you want to log out?');">
+
+                <span>↪</span>
+                <span>Logout</span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main">
+
+        <header class="page-header">
+
+            <h1>Add New Report</h1>
+
+            <p>
+                Create, validate and submit hospital disease reporting records.
+            </p>
+
+        </header>
+
+        <!-- INTRODUCTION -->
+
+        <section class="intro-card">
+
+            <h2>Hospital Reporting Workspace</h2>
+
+            <p>
+                Enter accurate reporting information below.
+                The system validates the submitted details,
+                checks for duplicate reports and automatically
+                determines the reporting status.
+            </p>
+
+        </section>
+
+        <!-- FLASH MESSAGES -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% for category, message in messages %}
+
+                <div class="alert {{ category }}">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endwith %}
+
+        <!-- REPORT FORM -->
+
+        <form method="POST"
+              action="{{ url_for('add_report') }}"
+              id="reportForm">
+
+            <section class="form-card">
+
+                <div class="form-heading">
+
+                    <h2>Report Information</h2>
+
+                    <p>
+                        Provide the hospital, reporting date and disease details.
+                    </p>
+
+                </div>
+
+                <div class="form-grid">
+
+                    <!-- REPORT DATE -->
+
+                    <div class="form-group">
+
+                        <label for="report_date">
+                            Report Date <span class="required">*</span>
+                        </label>
+
+                        <input
+                            type="date"
+                            id="report_date"
+                            name="report_date"
+                        >
+
+                        <span class="helper-text">
+                            Select the date for which the report is being prepared.
+                        </span>
+
+                    </div>
+
+                    <!-- HOSPITAL -->
+
+                    <div class="form-group">
+
+                        <label for="hospital_id">
+                            Hospital <span class="required">*</span>
+                        </label>
+
+                        <select
+                            id="hospital_id"
+                            name="hospital_id"
+                        >
+
+                            <option value="">
+                                Select Hospital
+                            </option>
+
+                            {% for hospital in hospitals %}
+
+                                <option value="{{ hospital.Hospital_ID }}">
+                                    {{ hospital.Hospital_Name }} — {{ hospital.District }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                        <span class="helper-text">
+                            Hospital information is loaded from the database.
+                        </span>
+
+                    </div>
+
+                    <!-- DISEASE -->
+
+                    <div class="form-group">
+
+                        <label for="disease">
+                            Disease <span class="required">*</span>
+                        </label>
+
+                        <select
+                            id="disease"
+                            name="disease"
+                        >
+
+                            <option value="">
+                                Select Disease
+                            </option>
+
+                            {% for disease in diseases %}
+
+                                <option value="{{ disease }}">
+                                    {{ disease }}
+                                </option>
+
+                            {% endfor %}
+
+                            <option value="Other">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- SUBMISSION STATUS -->
+
+                    <div class="form-group">
+
+                        <label for="submitted">
+                            Submission Status <span class="required">*</span>
+                        </label>
+
+                        <select
+                            id="submitted"
+                            name="submitted"
+                            onchange="toggleSubmissionFields()"
+                        >
+
+                            <option value="">
+                                Select Status
+                            </option>
+
+                            <option value="Yes">
+                                Submitted
+                            </option>
+
+                            <option value="No">
+                                Not Submitted
+                            </option>
+
+                        </select>
+
+                        <span class="helper-text">
+                            Select whether the hospital submitted the report.
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <!-- SUBMISSION DETAILS -->
+
+                <div class="submission-panel" id="submissionPanel">
+
+                    <h3>Submission Details</h3>
+
+                    <div class="submission-grid">
+
+                        <!-- CASES -->
+
+                        <div class="form-group">
+
+                            <label for="cases">
+                                Number of Cases
+                            </label>
+
+                            <input
+                                type="number"
+                                id="cases"
+                                name="cases"
+                                min="0"
+                                placeholder="Enter case count"
+                            >
+
+                        </div>
+
+                        <!-- SUBMISSION TIME -->
+
+                        <div class="form-group">
+
+                            <label for="submission_time">
+                                Submission Time
+                            </label>
+
+                            <input
+                                type="time"
+                                id="submission_time"
+                                name="submission_time"
+                            >
+
+                            <span class="helper-text">
+                                Enter the hospital's submission time.
+                            </span>
+
+                        </div>
+
+                        <!-- AUTOMATIC DELAY -->
+
+                        <div class="form-group">
+
+                            <label for="delay_minutes">
+                                Delay (Minutes)
+                            </label>
+
+                            <input
+                                type="number"
+                                id="delay_minutes"
+                                name="delay_minutes"
+                                min="0"
+                                value="0"
+                                readonly
+                            >
+
+                            <span class="helper-text" id="delay_message">
+                                Delay is calculated automatically.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="status-note">
+
+                        <strong>Automatic reporting status:</strong>
+
+                        0 minutes delay = On Time.
+
+                        More than 0 minutes delay = Late.
+
+                        The daily reporting deadline is 8:00 PM IST.
+
+                    </div>
+
+                </div>
+
+                <!-- REMARKS -->
+
+                <div class="form-group" style="margin-top: 25px;">
+
+                    <label for="remarks">
+                        Remarks / Additional Information
+                    </label>
+
+                    <textarea
+                        id="remarks"
+                        name="remarks"
+                        maxlength="255"
+                        placeholder="Enter any additional reporting information..."
+                    ></textarea>
+
+                    <span class="helper-text">
+                        Maximum 255 characters.
+                    </span>
+
+                </div>
+
+                <!-- ACTION BUTTONS -->
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        name="action"
+                        value="draft"
+                        class="btn btn-draft"
+                    >
+                        Save as Draft
+                    </button>
+
+                    <button
+                        type="submit"
+                        name="action"
+                        value="submit"
+                        class="btn btn-submit"
+                    >
+                        Submit Report →
+                    </button>
+
+                </div>
+
+            </section>
+
+        </form>
+
+        <footer class="footer">
+
+            Health Reporting System | Report Management
+
+        </footer>
+
+    </main>
+
+</div>
+
+<!-- AUTOMATIC DELAY CALCULATION -->
+
+<script>
+
+    function calculateDelay() {
+
+        const submissionTime = document.getElementById("submission_time");
+
+        const delayField = document.getElementById("delay_minutes");
+
+        const delayMessage = document.getElementById("delay_message");
+
+        if (!submissionTime || !delayField || !delayMessage) {
+            return;
+        }
+
+        const time = submissionTime.value;
+
+        if (!time) {
+
+            delayField.value = 0;
+
+            delayMessage.textContent =
+                "Enter submission time to calculate delay.";
+
+            return;
+        }
+
+        const parts = time.split(":");
+
+        const hours = parseInt(parts[0], 10);
+
+        const minutes = parseInt(parts[1], 10);
+
+        const enteredMinutes = (hours * 60) + minutes;
+
+        // DAILY DEADLINE: 8:00 PM
+
+        const deadlineMinutes = 20 * 60;
+
+        // AUTOMATIC DELAY
+
+        const delay = Math.max(
+            0,
+            enteredMinutes - deadlineMinutes
+        );
+
+        delayField.value = delay;
+
+        if (delay === 0) {
+
+            delayMessage.textContent =
+                "Report is On Time.";
+
+        } else {
+
+            delayMessage.textContent =
+                "Report is Late by " + delay + " minutes.";
+
+        }
+
+    }
+
+
+    // SHOW OR HIDE SUBMISSION FIELDS
+
+    function toggleSubmissionFields() {
+
+        const submitted = document.getElementById("submitted").value;
+
+        const panel = document.getElementById("submissionPanel");
+
+        const cases = document.getElementById("cases");
+
+        const time = document.getElementById("submission_time");
+
+        const delay = document.getElementById("delay_minutes");
+
+        const message = document.getElementById("delay_message");
+
+        if (submitted === "No") {
+
+            panel.style.display = "none";
+
+            cases.value = "";
+
+            time.value = "";
+
+            delay.value = "";
+
+            message.textContent =
+                "Report has not been submitted.";
+
+        } else {
+
+            panel.style.display = "block";
+
+            calculateDelay();
+
+        }
+
+    }
+
+
+    // LISTEN FOR SUBMISSION TIME CHANGES
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const submissionTime = document.getElementById("submission_time");
+
+        const submitted = document.getElementById("submitted");
+
+        if (submissionTime) {
+
+            submissionTime.addEventListener(
+                "input",
+                calculateDelay
+            );
+
+            submissionTime.addEventListener(
+                "change",
+                calculateDelay
+            );
+
+        }
+
+        if (submitted) {
+
+            submitted.addEventListener(
+                "change",
+                toggleSubmissionFields
+            );
+
+        }
+
+        toggleSubmissionFields();
+
+    });
+
+</script>
+
+</body>
+</html>

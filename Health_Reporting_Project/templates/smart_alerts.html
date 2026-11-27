@@ -1,0 +1,722 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Alerts | Health Reporting System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --midnight: #1B1931;
+            --plum: #44174E;
+            --berry: #662249;
+            --rose: #A34054;
+            --amber: #ED9E59;
+            --blush: #E9BCB9;
+            --background: #FAF7F5;
+            --text: #34263B;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        /* MAIN LAYOUT */
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 245px;
+            min-width: 245px;
+            min-height: 100vh;
+            height: 100vh;
+            padding: 30px 20px;
+            background: var(--midnight);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: bold;
+            line-height: 1.5;
+            margin-bottom: 45px;
+        }
+
+        .brand span {
+            color: var(--amber);
+        }
+
+        .nav-link {
+            display: block;
+            color: var(--blush);
+            text-decoration: none;
+            padding: 14px 15px;
+            margin-bottom: 10px;
+            border-radius: 9px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--plum);
+            color: white;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(233, 188, 185, 0.2);
+        }
+
+        .logout-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 15px;
+            color: var(--blush);
+            text-decoration: none;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .logout-link:hover {
+            background: var(--berry);
+            color: white;
+        }
+
+        /* MAIN CONTENT */
+
+        .main {
+            flex: 1;
+            min-width: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1450px;
+            margin: auto;
+        }
+
+        .header {
+            background: var(--midnight);
+            color: white;
+            padding: 28px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 27px;
+            margin-bottom: 9px;
+        }
+
+        .header p {
+            color: var(--blush);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        /* SUMMARY CARDS */
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 23px;
+            border-radius: 13px;
+            box-shadow: 0 4px 15px rgba(27, 25, 49, 0.06);
+            border-left: 5px solid var(--plum);
+        }
+
+        .summary-card h3 {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 13px;
+        }
+
+        .summary-card .number {
+            font-size: 31px;
+            font-weight: bold;
+            color: var(--midnight);
+        }
+
+        .summary-card.late {
+            border-left-color: var(--rose);
+        }
+
+        .summary-card.missing {
+            border-left-color: var(--amber);
+        }
+
+        .summary-card.disease {
+            border-left-color: var(--berry);
+        }
+
+        .summary-card.total {
+            border-left-color: var(--midnight);
+        }
+
+        /* SECTIONS */
+
+        .section {
+            background: white;
+            border-radius: 13px;
+            padding: 24px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(27, 25, 49, 0.05);
+        }
+
+        .section h2 {
+            font-size: 19px;
+            color: var(--midnight);
+            margin-bottom: 8px;
+        }
+
+        .section-description {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        /* TABLES */
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 750px;
+        }
+
+        th {
+            background: var(--midnight);
+            color: white;
+            padding: 13px;
+            text-align: left;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+
+        tr:hover td {
+            background: var(--background);
+        }
+
+        /* STATUS LABELS */
+
+        .status {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .status-late {
+            color: #922D42;
+            background: #F8E2E5;
+        }
+
+        .status-missing {
+            color: #87500B;
+            background: #FFF0D8;
+        }
+
+        .status-increase {
+            color: var(--berry);
+            background: #F1E3F1;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+            background: var(--background);
+            border-radius: 9px;
+            font-size: 14px;
+        }
+
+        .increase-value {
+            font-weight: bold;
+            color: var(--rose);
+        }
+
+        .month-info {
+            background: var(--background);
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 17px;
+            color: var(--plum);
+        }
+
+        /* FOOTER */
+
+        .footer {
+            text-align: center;
+            color: #888;
+            font-size: 12px;
+            padding: 20px;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1100px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 800px) {
+            .layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                min-width: 0;
+                height: auto;
+                min-height: auto;
+                padding: 20px;
+            }
+
+            .brand {
+                margin-bottom: 18px;
+            }
+
+            .nav-link {
+                display: inline-block;
+                margin: 4px;
+                padding: 10px;
+            }
+
+            .sidebar-bottom {
+                margin-top: 15px;
+            }
+
+            .main {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .section {
+                padding: 16px;
+            }
+
+            .main {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            HEALTH<br>
+            <span>REPORTING SYSTEM</span>
+        </div>
+
+        <a href="{{ url_for('home') }}" class="nav-link">
+            Overview
+        </a>
+
+        <a href="{{ url_for('data_quality') }}" class="nav-link">
+            Data Quality
+        </a>
+
+        <a href="{{ url_for('hospital_performance') }}" class="nav-link">
+            Hospital Performance
+        </a>
+
+        <a href="{{ url_for('disease_analysis') }}" class="nav-link">
+            Disease Analysis
+        </a>
+
+        <a href="{{ url_for('district_map') }}" class="nav-link">
+            District Health Map
+        </a>
+
+        <a href="{{ url_for('smart_alerts') }}" class="nav-link active">
+            Smart Alerts
+        </a>
+
+        {% if session.get('role') in ['admin', 'hospital_operator'] %}
+        <a href="{{ url_for('add_report') }}" class="nav-link">
+            Add New Report
+        </a>
+        {% endif %}
+
+        <div class="sidebar-bottom">
+
+            <a href="{{ url_for('logout') }}"
+               class="logout-link"
+               onclick="return confirm('Are you sure you want to log out?');">
+
+                <span>↪</span>
+                <span>Logout</span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main">
+
+        <div class="container">
+
+            <!-- HEADER -->
+
+            <header class="header">
+
+                <h1>Smart Alerts</h1>
+
+                <p>
+                    Monitor late submissions, missing reports and unusual
+                    increases in disease cases across healthcare facilities.
+                </p>
+
+            </header>
+
+            <!-- SUMMARY CARDS -->
+
+            <div class="summary-grid">
+
+                <div class="summary-card total">
+                    <h3>Total Alerts</h3>
+
+                    <div class="number">
+                        {{ alert_summary.total_alerts }}
+                    </div>
+                </div>
+
+                <div class="summary-card late">
+                    <h3>Late Submissions</h3>
+
+                    <div class="number">
+                        {{ alert_summary.late_count }}
+                    </div>
+                </div>
+
+                <div class="summary-card missing">
+                    <h3>Missing Submissions</h3>
+
+                    <div class="number">
+                        {{ alert_summary.missing_count }}
+                    </div>
+                </div>
+
+                <div class="summary-card disease">
+                    <h3>Disease Increase Alerts</h3>
+
+                    <div class="number">
+                        {{ alert_summary.disease_count }}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- LATE SUBMISSION ALERTS -->
+
+            <section class="section">
+
+                <h2>Late Submission Alerts</h2>
+
+                <p class="section-description">
+                    Reports recorded with a Late submission status.
+                </p>
+
+                {% if late_reports %}
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Report ID</th>
+                                <th>Report Date</th>
+                                <th>Hospital</th>
+                                <th>District</th>
+                                <th>Disease</th>
+                                <th>Delay (Minutes)</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for report in late_reports %}
+
+                            <tr>
+
+                                <td>{{ report.Report_ID }}</td>
+
+                                <td>{{ report.Report_Date }}</td>
+
+                                <td>{{ report.Hospital_Name }}</td>
+
+                                <td>{{ report.District }}</td>
+
+                                <td>{{ report.Disease }}</td>
+
+                                <td>{{ report.Delay_Minutes }}</td>
+
+                                <td>
+                                    <span class="status status-late">
+                                        Late
+                                    </span>
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                {% else %}
+
+                <div class="empty">
+                    No late submission alerts found.
+                </div>
+
+                {% endif %}
+
+            </section>
+
+            <!-- MISSING SUBMISSION ALERTS -->
+
+            <section class="section">
+
+                <h2>Missing Submission Alerts</h2>
+
+                <p class="section-description">
+                    Reports marked as Not Submitted in the health reports database.
+                </p>
+
+                {% if missing_reports %}
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Report ID</th>
+                                <th>Report Date</th>
+                                <th>Hospital</th>
+                                <th>District</th>
+                                <th>Disease</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for report in missing_reports %}
+
+                            <tr>
+
+                                <td>{{ report.Report_ID }}</td>
+
+                                <td>{{ report.Report_Date }}</td>
+
+                                <td>{{ report.Hospital_Name }}</td>
+
+                                <td>{{ report.District }}</td>
+
+                                <td>{{ report.Disease }}</td>
+
+                                <td>
+                                    <span class="status status-missing">
+                                        Not Submitted
+                                    </span>
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                {% else %}
+
+                <div class="empty">
+                    No missing submission alerts found.
+                </div>
+
+                {% endif %}
+
+            </section>
+
+            <!-- DISEASE INCREASE ALERTS -->
+
+            <section class="section">
+
+                <h2>Unusual Disease Increase Alerts</h2>
+
+                <p class="section-description">
+                    Diseases with an increase of 25% or more compared
+                    with the previous available reporting month.
+                </p>
+
+                {% if latest_month and previous_month %}
+
+                <div class="month-info">
+                    Comparing {{ previous_month }} with {{ latest_month }}
+                </div>
+
+                {% endif %}
+
+                {% if disease_alerts %}
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Disease</th>
+                                <th>Previous Month</th>
+                                <th>Previous Cases</th>
+                                <th>Latest Month</th>
+                                <th>Latest Cases</th>
+                                <th>Increase</th>
+                                <th>Alert</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for alert in disease_alerts %}
+
+                            <tr>
+
+                                <td>{{ alert.disease }}</td>
+
+                                <td>{{ alert.previous_month }}</td>
+
+                                <td>
+                                    {{ "{:,}".format(alert.previous_cases) }}
+                                </td>
+
+                                <td>{{ alert.latest_month }}</td>
+
+                                <td>
+                                    {{ "{:,}".format(alert.latest_cases) }}
+                                </td>
+
+                                <td class="increase-value">
+                                    +{{ alert.increase }}%
+                                </td>
+
+                                <td>
+                                    <span class="status status-increase">
+                                        Unusual Increase
+                                    </span>
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                {% else %}
+
+                <div class="empty">
+
+                    {% if not latest_month or not previous_month %}
+
+                        At least two reporting months are required
+                        to identify disease increases.
+
+                    {% else %}
+
+                        No disease increases of 25% or more were detected.
+
+                    {% endif %}
+
+                </div>
+
+                {% endif %}
+
+            </section>
+
+            <footer class="footer">
+                Health Reporting System | Smart Alerts
+            </footer>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

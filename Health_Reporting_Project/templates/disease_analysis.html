@@ -1,0 +1,712 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Disease Analysis | Health Reporting System</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #FAF7F5;
+            color: #34263B;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 245px;
+            background: #1B1931;
+            color: white;
+            padding: 30px 20px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: bold;
+            margin-bottom: 45px;
+            line-height: 1.5;
+        }
+
+        .brand span {
+            color: #ED9E59;
+        }
+
+        .nav-link {
+            display: block;
+            color: #E9BCB9;
+            text-decoration: none;
+            padding: 14px 15px;
+            margin-bottom: 10px;
+            border-radius: 9px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: #44174E;
+            color: white;
+        }
+
+        /* LOGOUT */
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(233, 188, 185, 0.2);
+        }
+
+        .logout-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 15px;
+            border-radius: 9px;
+            color: #E9BCB9;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .logout-link:hover {
+            background: #662249;
+            color: white;
+        }
+
+        .logout-icon {
+            font-size: 19px;
+        }
+
+        /* MAIN CONTENT */
+
+        .main {
+            flex: 1;
+            padding: 35px;
+            min-width: 0;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            font-size: 29px;
+            color: #1B1931;
+            margin-bottom: 9px;
+        }
+
+        .page-header p {
+            color: #806D7B;
+            font-size: 14px;
+        }
+
+        /* CHART SECTIONS */
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+            margin-bottom: 25px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 14px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 18px rgba(27, 25, 49, 0.06);
+            min-width: 0;
+        }
+
+        .chart-grid .section {
+            margin-bottom: 0;
+        }
+
+        .section h2 {
+            color: #44174E;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 320px;
+            width: 100%;
+        }
+
+        .wide-chart {
+            height: 350px;
+        }
+
+        /* TABLE */
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 450px;
+        }
+
+        th {
+            background: #1B1931;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 14px 15px;
+            border-bottom: 1px solid #F0E6E8;
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background: #FAF3F3;
+        }
+
+        .disease-name {
+            color: #44174E;
+            font-weight: bold;
+        }
+
+        .case-count {
+            color: #A34054;
+            font-weight: bold;
+        }
+
+        .empty-message {
+            color: #806D7B;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1000px) {
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 800px) {
+
+            .layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                min-height: auto;
+                padding: 20px;
+            }
+
+            .brand {
+                margin-bottom: 18px;
+            }
+
+            .nav-link {
+                display: inline-block;
+                margin: 4px;
+                padding: 10px;
+            }
+
+            .sidebar-bottom {
+                margin-top: 15px;
+            }
+
+            .main {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            .page-header h1 {
+                font-size: 24px;
+            }
+
+            .section {
+                padding: 17px;
+            }
+
+            .chart-container {
+                height: 270px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            HEALTH<br>
+            <span>REPORTING SYSTEM</span>
+        </div>
+
+        <a href="{{ url_for('home') }}" class="nav-link">
+            Overview
+        </a>
+
+        <a href="{{ url_for('data_quality') }}" class="nav-link">
+            Data Quality
+        </a>
+
+        <a href="{{ url_for('hospital_performance') }}" class="nav-link">
+            Hospital Performance
+        </a>
+
+        <a href="{{ url_for('disease_analysis') }}" class="nav-link active">
+            Disease Analysis
+        </a>
+
+        <!-- DISTRICT HEALTH MAP -->
+
+        <a href="{{ url_for('district_map') }}" class="nav-link">
+            District Health Map
+        </a>
+
+        <!-- SMART ALERTS -->
+
+        <a href="{{ url_for('smart_alerts') }}" class="nav-link">
+            Smart Alerts
+        </a>
+
+        <!-- ADD NEW REPORT -->
+
+        {% if session.get('role') in ['admin', 'hospital_operator'] %}
+
+        <a href="{{ url_for('add_report') }}" class="nav-link">
+            Add New Report
+        </a>
+
+        {% endif %}
+
+        <!-- LOGOUT -->
+
+        <div class="sidebar-bottom">
+
+            <a href="{{ url_for('logout') }}"
+               class="logout-link"
+               onclick="return confirm('Are you sure you want to log out?');">
+
+                <span class="logout-icon">↪</span>
+                <span>Logout</span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main">
+
+        <header class="page-header">
+
+            <h1>Disease Analysis</h1>
+
+            <p>
+                Analysis of reported disease cases across districts and months
+            </p>
+
+        </header>
+
+        <!-- FIRST ROW: TWO CHARTS -->
+
+        <div class="chart-grid">
+
+            <section class="section">
+
+                <h2>Disease-wise Cases</h2>
+
+                <div class="chart-container">
+                    <canvas id="diseaseChart"></canvas>
+                </div>
+
+            </section>
+
+            <section class="section">
+
+                <h2>District-wise Cases</h2>
+
+                <div class="chart-container">
+                    <canvas id="districtChart"></canvas>
+                </div>
+
+            </section>
+
+        </div>
+
+        <!-- MONTHLY TREND CHART -->
+
+        <section class="section">
+
+            <h2>Monthly Disease Trend</h2>
+
+            <div class="chart-container wide-chart">
+                <canvas id="monthlyChart"></canvas>
+            </div>
+
+        </section>
+
+        <!-- DISEASE SUMMARY TABLE -->
+
+        <section class="section">
+
+            <h2>Disease-wise Summary</h2>
+
+            {% if disease_summary %}
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Disease Name</th>
+                            <th>Total Reported Cases</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for disease in disease_summary %}
+
+                        <tr>
+
+                            <td class="disease-name">
+                                {{ disease.label }}
+                            </td>
+
+                            <td class="case-count">
+                                {{ "{:,}".format(disease.total_cases or 0) }}
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="empty-message">
+                No disease data available.
+            </div>
+
+            {% endif %}
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- CHART.JS -->
+
+<script>
+
+    // DATA RECEIVED FROM FLASK
+
+    const diseaseLabels = {{ disease_summary | map(attribute='label') | list | tojson }};
+
+    const diseaseCases = {{ disease_summary | map(attribute='total_cases') | list | tojson }};
+
+    const districtLabels = {{ district_summary | map(attribute='label') | list | tojson }};
+
+    const districtCases = {{ district_summary | map(attribute='total_cases') | list | tojson }};
+
+    const monthlyLabels = {{ monthly_summary | map(attribute='label') | list | tojson }};
+
+    const monthlyCases = {{ monthly_summary | map(attribute='total_cases') | list | tojson }};
+
+
+    // COLOR PALETTE
+
+    const palette = [
+        '#1B1931',
+        '#44174E',
+        '#662249',
+        '#A34054',
+        '#ED9E59',
+        '#E9BCB9'
+    ];
+
+
+    // COMMON CHART SETTINGS
+
+    Chart.defaults.font.family = 'Arial';
+
+    Chart.defaults.color = '#806D7B';
+
+
+    // 1. DISEASE-WISE CASES CHART
+
+    new Chart(document.getElementById('diseaseChart'), {
+
+        type: 'bar',
+
+        data: {
+
+            labels: diseaseLabels,
+
+            datasets: [{
+
+                label: 'Total Cases',
+
+                data: diseaseCases,
+
+                backgroundColor: diseaseLabels.map(
+                    (_, index) => palette[index % palette.length]
+                ),
+
+                borderRadius: 6,
+
+                borderSkipped: false
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: false
+                }
+
+            },
+
+            scales: {
+
+                x: {
+
+                    ticks: {
+                        maxRotation: 60,
+                        minRotation: 30
+                    },
+
+                    grid: {
+                        display: false
+                    }
+
+                },
+
+                y: {
+
+                    beginAtZero: true,
+
+                    grid: {
+                        color: '#F0E6E8'
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+
+    // 2. DISTRICT-WISE CASES CHART
+
+    new Chart(document.getElementById('districtChart'), {
+
+        type: 'bar',
+
+        data: {
+
+            labels: districtLabels,
+
+            datasets: [{
+
+                label: 'Total Cases',
+
+                data: districtCases,
+
+                backgroundColor: '#A34054',
+
+                borderRadius: 6,
+
+                borderSkipped: false
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            indexAxis: 'y',
+
+            plugins: {
+
+                legend: {
+                    display: false
+                }
+
+            },
+
+            scales: {
+
+                x: {
+
+                    beginAtZero: true,
+
+                    grid: {
+                        color: '#F0E6E8'
+                    }
+
+                },
+
+                y: {
+
+                    grid: {
+                        display: false
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+
+    // 3. MONTHLY DISEASE TREND CHART
+
+    new Chart(document.getElementById('monthlyChart'), {
+
+        type: 'line',
+
+        data: {
+
+            labels: monthlyLabels,
+
+            datasets: [{
+
+                label: 'Total Cases',
+
+                data: monthlyCases,
+
+                borderColor: '#662249',
+
+                backgroundColor: 'rgba(163, 64, 84, 0.15)',
+
+                pointBackgroundColor: '#ED9E59',
+
+                pointBorderColor: '#662249',
+
+                pointRadius: 5,
+
+                pointHoverRadius: 7,
+
+                borderWidth: 3,
+
+                fill: true,
+
+                tension: 0.35
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+
+                    labels: {
+                        usePointStyle: true
+                    }
+
+                }
+
+            },
+
+            scales: {
+
+                x: {
+
+                    grid: {
+                        display: false
+                    }
+
+                },
+
+                y: {
+
+                    beginAtZero: true,
+
+                    grid: {
+                        color: '#F0E6E8'
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
